@@ -1,0 +1,33 @@
+{
+  "name": "cosmos-framework",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "nx": "nx",
+    "serve:shell": "nx serve shell-astro",
+    "serve:discovery": "nx serve service-discovery",
+    "serve:catalog": "nx serve mf-react-catalog",
+    "serve:all": "nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3",
+    "build": "nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro",
+    "check": "nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro"
+  },
+  "devDependencies": {
+    "@astrojs/node": "^9.0.0",
+    "@astrojs/react": "^4.1.0",
+    "@nx/js": "20.4.0",
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "astro": "^5.3.0",
+    "nx": "20.4.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1",
+    "zod": "^3.24.2"
+  }
+}

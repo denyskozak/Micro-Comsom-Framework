@@ -1,0 +1,26 @@
+{
+  "name": "service-discovery",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/service-discovery/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx apps/service-discovery/src/main.ts"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/service-discovery/tsconfig.app.json"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p apps/service-discovery/tsconfig.app.json --noEmit"
+      }
+    }
+  }
+}

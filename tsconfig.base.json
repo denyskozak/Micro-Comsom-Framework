@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cosmos/discovery-contracts": ["libs/discovery-contracts/src/index.ts"],
+      "@cosmos/discovery-client": ["libs/discovery-client/src/index.ts"],
+      "@cosmos/shared-types": ["libs/shared-types/src/index.ts"]
+    }
+  }
+}

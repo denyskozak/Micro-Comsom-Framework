@@ -1,0 +1,39 @@
+---
+import ShellLayout from '../components/ShellLayout.astro';
+import type { MicrofrontendManifestEntry } from '@cosmos/discovery-contracts';
+
+const pathSegments = Astro.params.path ? Astro.params.path.split('/') : [];
+const routePath = `/${pathSegments.join('/')}`;
+const manifest = Astro.locals.manifest;
+
+const matchesRoute = (entry: MicrofrontendManifestEntry, requestPath: string): boolean => {
+  if (requestPath.startsWith(entry.basePath)) {
+    return true;
+  }
+
+  // Route pattern matching for simple params (e.g. /catalog/:id)
+  // keeps composition explicit and easy to reason about.
+  return entry.routes.some((pattern) => {
+    const patternRegex = new RegExp(
+      `^${pattern
+        .replace(/:[^/]+/g, '[^/]+')
+        .replace(/\//g, '\\/')}$`
+    );
+
+    return patternRegex.test(requestPath);
+  });
+};
+
+const entry = manifest.entries.find((item) => matchesRoute(item, routePath));
+
+let composedHtml = '';
+if (entry) {
+  const ssrResponse = await fetch(`${entry.ssrUrl}?route=${encodeURIComponent(routePath)}`);
+  if (ssrResponse.ok) {
+    const payload = (await ssrResponse.json()) as { html?: string };
+    composedHtml = payload.html ?? '';
+  }
+}
+---
+
+<ShellLayout route={routePath} composedHtml={composedHtml} sourceName={entry?.name} />

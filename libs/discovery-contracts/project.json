@@ -1,0 +1,20 @@
+{
+  "name": "discovery-contracts",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/discovery-contracts/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/discovery-contracts/tsconfig.lib.json"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/discovery-contracts/tsconfig.lib.json --noEmit"
+      }
+    }
+  }
+}

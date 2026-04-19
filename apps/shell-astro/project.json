@@ -1,0 +1,26 @@
+{
+  "name": "shell-astro",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/shell-astro/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "astro dev --root apps/shell-astro --port 4300"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "astro build --root apps/shell-astro"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "astro check --root apps/shell-astro"
+      }
+    }
+  }
+}
