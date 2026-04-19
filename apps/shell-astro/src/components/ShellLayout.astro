@@ -1,0 +1,36 @@
+---
+interface Props {
+  route: string;
+  composedHtml?: string;
+  sourceName?: string;
+}
+
+const { route, composedHtml, sourceName } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Cosmos Framework Shell</title>
+  </head>
+  <body>
+    <header>
+      <h1>Cosmos Framework</h1>
+      <p>Astro SSR shell composing manifest-registered micro-frontends.</p>
+      <nav>
+        <a href="/">Home</a>
+        {' | '}
+        <a href="/catalog">Catalog</a>
+        {' | '}
+        <a href="/catalog/1">Catalog Item</a>
+      </nav>
+      <hr />
+    </header>
+    <main>
+      <p><strong>Current route:</strong> {route}</p>
+      <p><strong>Composed by:</strong> {sourceName ?? 'No matching micro-frontend'}</p>
+      {composedHtml ? <Fragment set:html={composedHtml} /> : <p>No micro-frontend rendered.</p>}
+    </main>
+  </body>
+</html>
