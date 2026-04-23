@@ -11,7 +11,10 @@ It demonstrates how an Astro shell composes pages from independently running SSR
 apps/
   shell-astro/            Astro SSR shell + composition middleware
   service-discovery/      Node.js discovery service (native http + Zod)
-  mf-react-catalog/       Example React + React Router SSR micro-frontend
+  mf-react-catalog/       Example React + React Router SSR content micro-frontend
+  mf-header-ssr/          SSR header micro-frontend with Sign-In event emitter
+  mf-footer-ssr/          SSR footer micro-frontend
+  mf-auth-client/         Client-side auth micro-frontend listening for header events
 libs/
   discovery-contracts/    Shared Zod schemas and inferred TypeScript types
   discovery-client/       Reusable service-discovery registration/heartbeat client
@@ -62,6 +65,9 @@ libs/
 - Shell (Astro): `4300`
 - Discovery service: `4400`
 - Catalog micro-frontend: `4500`
+- Header micro-frontend: `4501`
+- Footer micro-frontend: `4502`
+- Auth micro-frontend: `4503`
 
 ## Request flow (SSR composition)
 
@@ -92,6 +98,9 @@ Run services in separate terminals:
 ```bash
 pnpm serve:discovery
 pnpm serve:catalog
+pnpm serve:header
+pnpm serve:footer
+pnpm serve:auth
 pnpm serve:shell
 ```
 
@@ -105,6 +114,8 @@ pnpm serve:all
 
 - Shell home: http://localhost:4300/
 - Composed catalog list: http://localhost:4300/catalog
+- Header Sign-In button emits `auth:signin-click` via EventEmitter3
+- Auth micro-frontend updates status text after Sign-In click
 - Composed catalog detail: http://localhost:4300/catalog/1
 - Discovery health: http://localhost:4400/health
 - Discovery manifest: http://localhost:4400/manifest
@@ -113,6 +124,9 @@ pnpm serve:all
 
 - `nx serve service-discovery`
 - `nx serve mf-react-catalog`
+- `nx serve mf-header-ssr`
+- `nx serve mf-footer-ssr`
+- `nx serve mf-auth-client`
 - `nx serve shell-astro`
 - `nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3`
 - `nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
