@@ -19,6 +19,8 @@ libs/
   discovery-contracts/    Shared Zod schemas and inferred TypeScript types
   discovery-client/       Reusable service-discovery registration/heartbeat client
   shared-types/           Optional shared platform types
+  mfe-infrastructure/     Nx package with orchestration targets for MFE runtime
+  vitest-config/          Shared Vitest config factory helpers
 ```
 
 ### Runtime components
@@ -110,6 +112,12 @@ Or try running all together:
 pnpm serve:all
 ```
 
+Or run only MFE servers (without shell/discovery):
+
+```bash
+pnpm serve:mfe-infrastructure
+```
+
 ## Example URLs
 
 - Shell home: http://localhost:4300/
@@ -129,6 +137,8 @@ pnpm serve:all
 - `nx serve mf-auth-client`
 - `nx serve shell-astro`
 - `nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3`
+- `nx serve mfe-infrastructure`
+- `nx run mfe-infrastructure:serve:platform`
 - `nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
 - `nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
 

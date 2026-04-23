@@ -16,6 +16,42 @@ const { route, headerHtml, authHtml, composedHtml, footerHtml, sourceName } = As
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Cosmos Framework Shell</title>
+    <style>
+      .mfe-frame {
+        border: 3px solid var(--mfe-color);
+        margin: 1rem 0;
+        padding: 0.75rem;
+        border-radius: 8px;
+        background-image: repeating-linear-gradient(
+          -45deg,
+          color-mix(in srgb, var(--mfe-color) 14%, transparent) 0,
+          color-mix(in srgb, var(--mfe-color) 14%, transparent) 10px,
+          transparent 10px,
+          transparent 20px
+        );
+      }
+
+      .mfe-frame h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      .mfe-header {
+        --mfe-color: #0ea5e9;
+      }
+
+      .mfe-auth {
+        --mfe-color: #16a34a;
+      }
+
+      .mfe-content {
+        --mfe-color: #9333ea;
+      }
+
+      .mfe-footer {
+        --mfe-color: #ea580c;
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -29,17 +65,29 @@ const { route, headerHtml, authHtml, composedHtml, footerHtml, sourceName } = As
         <a href="/catalog/1">Catalog Item</a>
       </nav>
       <hr />
-      {headerHtml ? <Fragment set:html={headerHtml} /> : <p>Header micro-frontend is unavailable.</p>}
+      <section class="mfe-frame mfe-header">
+        <h2>Header micro-frontend</h2>
+        {headerHtml ? <Fragment set:html={headerHtml} /> : <p>Header micro-frontend is unavailable.</p>}
+      </section>
     </header>
     <main>
       <p><strong>Current route:</strong> {route}</p>
       <p><strong>Composed by:</strong> {sourceName ?? 'No matching micro-frontend'}</p>
-      {authHtml ? <Fragment set:html={authHtml} /> : <p>Auth micro-frontend is unavailable.</p>}
-      {composedHtml ? <Fragment set:html={composedHtml} /> : <p>No micro-frontend rendered.</p>}
+      <section class="mfe-frame mfe-auth">
+        <h2>Auth micro-frontend</h2>
+        {authHtml ? <Fragment set:html={authHtml} /> : <p>Auth micro-frontend is unavailable.</p>}
+      </section>
+      <section class="mfe-frame mfe-content">
+        <h2>Content micro-frontend</h2>
+        {composedHtml ? <Fragment set:html={composedHtml} /> : <p>No micro-frontend rendered.</p>}
+      </section>
     </main>
     <footer>
       <hr />
-      {footerHtml ? <Fragment set:html={footerHtml} /> : <p>Footer micro-frontend is unavailable.</p>}
+      <section class="mfe-frame mfe-footer">
+        <h2>Footer micro-frontend</h2>
+        {footerHtml ? <Fragment set:html={footerHtml} /> : <p>Footer micro-frontend is unavailable.</p>}
+      </section>
     </footer>
   </body>
 </html>

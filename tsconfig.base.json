@@ -11,9 +11,21 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@cosmos/discovery-contracts": ["libs/discovery-contracts/src/index.ts"],
-      "@cosmos/discovery-client": ["libs/discovery-client/src/index.ts"],
-      "@cosmos/shared-types": ["libs/shared-types/src/index.ts"]
+      "@cosmos/discovery-contracts": [
+        "libs/discovery-contracts/src/index.ts"
+      ],
+      "@cosmos/discovery-client": [
+        "libs/discovery-client/src/index.ts"
+      ],
+      "@cosmos/shared-types": [
+        "libs/shared-types/src/index.ts"
+      ],
+      "@cosmos/mfe-infrastructure": [
+        "libs/mfe-infrastructure/src/index.ts"
+      ],
+      "@cosmos/vitest-config": [
+        "libs/vitest-config/src/index.ts"
+      ]
     }
   }
 }

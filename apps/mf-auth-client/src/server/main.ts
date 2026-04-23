@@ -21,7 +21,7 @@ const registrationPayload = {
   metadata: {
     slot: 'auth',
     global: true,
-    framework: 'ssr-html'
+    framework: 'react-client'
   }
 };
 

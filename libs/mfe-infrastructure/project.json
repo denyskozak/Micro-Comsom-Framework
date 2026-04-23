@@ -1,0 +1,32 @@
+{
+  "name": "mfe-infrastructure",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mfe-infrastructure/src",
+  "projectType": "library",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run-many -t serve -p mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client --parallel=4"
+      }
+    },
+    "serve:platform": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx run-many -t serve -p service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro --parallel=6"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/mfe-infrastructure/tsconfig.lib.json --noEmit"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/mfe-infrastructure/tsconfig.lib.json"
+      }
+    }
+  }
+}

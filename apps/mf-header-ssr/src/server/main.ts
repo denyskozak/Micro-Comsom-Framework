@@ -21,7 +21,7 @@ const registrationPayload = {
   metadata: {
     slot: 'header',
     global: true,
-    framework: 'ssr-html'
+    framework: 'react-router-ssr'
   }
 };
 
@@ -45,9 +45,11 @@ const server = createServer(async (request, response) => {
   }
 
   if (request.method === 'GET' && url.pathname === '/ssr') {
+    const route = url.searchParams.get('route') ?? '/';
+
     response.statusCode = 200;
     response.setHeader('content-type', 'application/json');
-    response.end(JSON.stringify({ html: renderHeaderHtml() }));
+    response.end(JSON.stringify({ html: renderHeaderHtml(route) }));
     return;
   }
 

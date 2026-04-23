@@ -1,8 +1,16 @@
-export const renderHeaderHtml = (): string => `
-<section>
-  <h2>Header Micro-Frontend (SSR)</h2>
-  <button id="cosmos-signin-btn" type="button">Sign-In</button>
-</section>
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom/server';
+import { HeaderRoutes } from '../app/header-routes';
+
+export const renderHeaderHtml = (route: string): string => {
+  const appHtml = renderToString(
+    <StaticRouter location={route}>
+      <HeaderRoutes />
+    </StaticRouter>
+  );
+
+  return `${appHtml}
 <script src="https://unpkg.com/eventemitter3@5.0.1/umd/eventemitter3.min.js"></script>
 <script>
 (() => {
@@ -19,5 +27,5 @@ export const renderHeaderHtml = (): string => `
     });
   });
 })();
-</script>
-`;
+</script>`;
+};
