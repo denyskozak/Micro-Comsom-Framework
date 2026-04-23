@@ -1,6 +1,6 @@
-# Cosmos Framework (Prototype)
+# Micro Cosmos Framework (Prototype)
 
-Cosmos Framework is a production-oriented **enterprise SSR micro-frontend platform prototype** in an Nx monorepo.  
+Micro Cosmos Framework is a production-oriented **enterprise SSR micro-frontend platform prototype** in an Nx monorepo.  
 It demonstrates how an Astro shell composes pages from independently running SSR micro-frontends that self-register into a discovery service.
 
 ## Architecture overview
