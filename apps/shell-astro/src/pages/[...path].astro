@@ -7,33 +7,55 @@ const routePath = `/${pathSegments.join('/')}`;
 const manifest = Astro.locals.manifest;
 
 const matchesRoute = (entry: MicrofrontendManifestEntry, requestPath: string): boolean => {
-  if (requestPath.startsWith(entry.basePath)) {
+  if (entry.basePath !== '/' && requestPath.startsWith(entry.basePath)) {
     return true;
   }
 
-  // Route pattern matching for simple params (e.g. /catalog/:id)
-  // keeps composition explicit and easy to reason about.
   return entry.routes.some((pattern) => {
-    const patternRegex = new RegExp(
-      `^${pattern
-        .replace(/:[^/]+/g, '[^/]+')
-        .replace(/\//g, '\\/')}$`
-    );
-
+    const patternRegex = new RegExp(`^${pattern.replace(/:[^/]+/g, '[^/]+').replace(/\//g, '\\/')}$`);
     return patternRegex.test(requestPath);
   });
 };
 
-const entry = manifest.entries.find((item) => matchesRoute(item, routePath));
+const getSlot = (entry: MicrofrontendManifestEntry): string => {
+  const rawSlot = entry.metadata?.slot;
+  return typeof rawSlot === 'string' ? rawSlot : 'content';
+};
 
-let composedHtml = '';
-if (entry) {
-  const ssrResponse = await fetch(`${entry.ssrUrl}?route=${encodeURIComponent(routePath)}`);
-  if (ssrResponse.ok) {
-    const payload = (await ssrResponse.json()) as { html?: string };
-    composedHtml = payload.html ?? '';
+const fetchFragment = async (entry?: MicrofrontendManifestEntry): Promise<string> => {
+  if (!entry) {
+    return '';
   }
-}
+
+  const ssrResponse = await fetch(`${entry.ssrUrl}?route=${encodeURIComponent(routePath)}`);
+  if (!ssrResponse.ok) {
+    return '';
+  }
+
+  const payload = (await ssrResponse.json()) as { html?: string };
+  return payload.html ?? '';
+};
+
+const headerEntry = manifest.entries.find((entry) => getSlot(entry) === 'header');
+const authEntry = manifest.entries.find((entry) => getSlot(entry) === 'auth');
+const footerEntry = manifest.entries.find((entry) => getSlot(entry) === 'footer');
+const contentEntry = manifest.entries.find(
+  (entry) => getSlot(entry) === 'content' && matchesRoute(entry, routePath)
+);
+
+const [headerHtml, authHtml, composedHtml, footerHtml] = await Promise.all([
+  fetchFragment(headerEntry),
+  fetchFragment(authEntry),
+  fetchFragment(contentEntry),
+  fetchFragment(footerEntry)
+]);
 ---
 
-<ShellLayout route={routePath} composedHtml={composedHtml} sourceName={entry?.name} />
+<ShellLayout
+  route={routePath}
+  headerHtml={headerHtml}
+  authHtml={authHtml}
+  composedHtml={composedHtml}
+  footerHtml={footerHtml}
+  sourceName={contentEntry?.name}
+/>

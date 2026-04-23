@@ -1,9 +1,45 @@
 ---
 import ShellLayout from '../components/ShellLayout.astro';
+import type { MicrofrontendManifestEntry } from '@cosmos/discovery-contracts';
+
+const routePath = '/';
+const manifest = Astro.locals.manifest;
+
+const getSlot = (entry: MicrofrontendManifestEntry): string => {
+  const rawSlot = entry.metadata?.slot;
+  return typeof rawSlot === 'string' ? rawSlot : 'content';
+};
+
+const fetchFragment = async (entry?: MicrofrontendManifestEntry): Promise<string> => {
+  if (!entry) {
+    return '';
+  }
+
+  const ssrResponse = await fetch(`${entry.ssrUrl}?route=${encodeURIComponent(routePath)}`);
+  if (!ssrResponse.ok) {
+    return '';
+  }
+
+  const payload = (await ssrResponse.json()) as { html?: string };
+  return payload.html ?? '';
+};
+
+const headerEntry = manifest.entries.find((entry) => getSlot(entry) === 'header');
+const authEntry = manifest.entries.find((entry) => getSlot(entry) === 'auth');
+const footerEntry = manifest.entries.find((entry) => getSlot(entry) === 'footer');
+
+const [headerHtml, authHtml, footerHtml] = await Promise.all([
+  fetchFragment(headerEntry),
+  fetchFragment(authEntry),
+  fetchFragment(footerEntry)
+]);
 ---
 
 <ShellLayout
-  route="/"
+  route={routePath}
+  headerHtml={headerHtml}
+  authHtml={authHtml}
   composedHtml="<section><h2>Welcome</h2><p>The shell composes route fragments from discovered micro-frontends.</p></section>"
+  footerHtml={footerHtml}
   sourceName="shell"
 />

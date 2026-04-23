@@ -1,11 +1,14 @@
 ---
 interface Props {
   route: string;
+  headerHtml?: string;
+  authHtml?: string;
   composedHtml?: string;
+  footerHtml?: string;
   sourceName?: string;
 }
 
-const { route, composedHtml, sourceName } = Astro.props;
+const { route, headerHtml, authHtml, composedHtml, footerHtml, sourceName } = Astro.props;
 ---
 
 <html lang="en">
@@ -26,11 +29,17 @@ const { route, composedHtml, sourceName } = Astro.props;
         <a href="/catalog/1">Catalog Item</a>
       </nav>
       <hr />
+      {headerHtml ? <Fragment set:html={headerHtml} /> : <p>Header micro-frontend is unavailable.</p>}
     </header>
     <main>
       <p><strong>Current route:</strong> {route}</p>
       <p><strong>Composed by:</strong> {sourceName ?? 'No matching micro-frontend'}</p>
+      {authHtml ? <Fragment set:html={authHtml} /> : <p>Auth micro-frontend is unavailable.</p>}
       {composedHtml ? <Fragment set:html={composedHtml} /> : <p>No micro-frontend rendered.</p>}
     </main>
+    <footer>
+      <hr />
+      {footerHtml ? <Fragment set:html={footerHtml} /> : <p>Footer micro-frontend is unavailable.</p>}
+    </footer>
   </body>
 </html>

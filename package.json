@@ -8,9 +8,12 @@
     "serve:shell": "nx serve shell-astro",
     "serve:discovery": "nx serve service-discovery",
     "serve:catalog": "nx serve mf-react-catalog",
-    "serve:all": "nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3",
-    "build": "nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro",
-    "check": "nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro"
+    "serve:all": "nx run-many -t serve -p service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro --parallel=6",
+    "build": "nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro",
+    "check": "nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro",
+    "serve:header": "nx serve mf-header-ssr",
+    "serve:footer": "nx serve mf-footer-ssr",
+    "serve:auth": "nx serve mf-auth-client"
   },
   "devDependencies": {
     "@astrojs/node": "^9.0.0",
@@ -28,6 +31,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.1",
-    "zod": "^3.24.2"
+    "zod": "^3.24.2",
+    "eventemitter3": "^5.0.1"
   }
 }
