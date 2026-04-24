@@ -39,6 +39,8 @@ export const manifestResponseSchema = z.object({
   entries: z.array(microfrontendManifestEntrySchema)
 });
 
+export type ManifestResponseSchema =  z.infer<typeof manifestResponseSchema>;
+
 export const errorResponseSchema = z.object({
   error: z.object({
     code: z.string(),

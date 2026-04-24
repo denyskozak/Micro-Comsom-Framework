@@ -28,11 +28,15 @@ const headerEntry = manifest.entries.find((entry) => getSlot(entry) === 'header'
 const authEntry = manifest.entries.find((entry) => getSlot(entry) === 'auth');
 const footerEntry = manifest.entries.find((entry) => getSlot(entry) === 'footer');
 
-const [headerHtml, authHtml, footerHtml] = await Promise.all([
-  fetchFragment(headerEntry),
-  fetchFragment(authEntry),
-  fetchFragment(footerEntry)
-]);
+try {
+    const [headerHtml, authHtml, footerHtml] = await Promise.all([
+        fetchFragment(headerEntry),
+        fetchFragment(authEntry),
+        fetchFragment(footerEntry)
+    ]);
+} catch (error) {
+    console.error(error);
+}
 ---
 
 <ShellLayout

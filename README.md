@@ -1,9 +1,29 @@
-# Micro Cosmos Framework (Prototype)
+# Micro-Cosmos Framework
 
-Micro Cosmos Framework is a production-oriented **enterprise SSR micro-frontend platform prototype** in an Nx monorepo.  
-It demonstrates how an Astro shell composes pages from independently running SSR micro-frontends that self-register into a discovery service.
+Micro Cosmos meta-framework is a open source production-oriented **enterprise SSR micro-frontend platform prototype** designed to serve different independent frontend teams in one project
+## Problems
+
+- No scalable vertical and horizontal solution for SSR microfrontends
+- Difficulty to use few frontend fromeworks in single project
+- Inconcistancy between teams in organization
+
+## Solutions
+
+- Free Micro-frontends with out-of-the box
+- Framework Agnostic - use React, Vue, Angular, etc
+- Built modulary and on universal Hotwire approach
+
 
 ## Architecture overview
+
+### Astro
+
+Astro is a flexible, unopinionated framework that allows you to configure your project in many different ways. In our case is UI composer which "fetch -> collect -> render" micro-frontends with cache
+
+### Hotwire (HTML-Over-The-Wire Approach)
+
+Hotwire is an alternative approach to building modern web applications without using much JavaScript by sending HTML instead of JSON over the wire. This makes for fast first-load pages, keeps template rendering on the server, and allows for a simpler, more productive development experience in any programming language, without sacrificing any of the speed or responsiveness associated with a traditional single-page application.
+
 
 ### Monorepo layout
 
