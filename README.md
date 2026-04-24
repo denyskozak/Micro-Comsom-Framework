@@ -112,6 +112,16 @@ Or try running all together:
 pnpm serve:all
 ```
 
+Developer-friendly aliases for full platform:
+
+```bash
+pnpm dev:platform
+pnpm prod:platform
+```
+
+- `dev:platform` runs registry + shell + all micro-frontends in development mode.
+- `prod:platform` builds everything and starts registry + shell + all micro-frontends from build artifacts.
+
 Or run only MFE servers (without shell/discovery):
 
 ```bash
@@ -139,6 +149,7 @@ pnpm serve:mfe-infrastructure
 - `nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3`
 - `nx serve mfe-infrastructure`
 - `nx run mfe-infrastructure:serve:platform`
+- `nx run mfe-infrastructure:serve:platform:prod`
 - `nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
 - `nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
 

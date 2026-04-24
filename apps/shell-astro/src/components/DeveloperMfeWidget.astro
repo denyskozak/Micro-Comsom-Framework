@@ -1,0 +1,109 @@
+---
+interface ConnectedMicrofrontend {
+  name: string;
+  basePath: string;
+  slot: string;
+  ssrUrl: string;
+}
+
+interface Props {
+  connectedMicrofrontends: ConnectedMicrofrontend[];
+}
+
+const { connectedMicrofrontends } = Astro.props;
+const widgetId = 'mfe-dev-widget';
+---
+
+<aside id={widgetId} class="mfe-dev-widget" data-open="true">
+  <button
+    id={`${widgetId}-toggle`}
+    class="mfe-dev-widget__toggle"
+    type="button"
+    aria-controls={`${widgetId}-panel`}
+    aria-expanded="true"
+  >
+    Hide MFE list
+  </button>
+
+  <section id={`${widgetId}-panel`} class="mfe-dev-widget__panel">
+    <h3>Connected micro-frontends</h3>
+    {
+      connectedMicrofrontends.length > 0 ? (
+        <ul>
+          {connectedMicrofrontends.map((entry) => (
+            <li>
+              <strong>{entry.name}</strong> ({entry.slot})<br />
+              <small>{entry.basePath} → {entry.ssrUrl}</small>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No active micro-frontends in Astro.locals.</p>
+      )
+    }
+  </section>
+</aside>
+
+<script>
+  const widget = document.getElementById('mfe-dev-widget');
+  const toggle = document.getElementById('mfe-dev-widget-toggle');
+  const panel = document.getElementById('mfe-dev-widget-panel');
+
+  if (widget && toggle && panel) {
+    toggle.addEventListener('click', () => {
+      const isOpen = widget.getAttribute('data-open') === 'true';
+      const nextIsOpen = !isOpen;
+      widget.setAttribute('data-open', String(nextIsOpen));
+      panel.hidden = !nextIsOpen;
+      toggle.setAttribute('aria-expanded', String(nextIsOpen));
+      toggle.textContent = nextIsOpen ? 'Hide MFE list' : 'Show MFE list';
+    });
+  }
+</script>
+
+<style>
+  .mfe-dev-widget {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    width: min(420px, calc(100vw - 2rem));
+    z-index: 9999;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  }
+
+  .mfe-dev-widget__toggle {
+    width: 100%;
+    border: 0;
+    border-radius: 8px 8px 0 0;
+    padding: 0.5rem 0.75rem;
+    background: #111827;
+    color: #f9fafb;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .mfe-dev-widget__panel {
+    background: rgba(17, 24, 39, 0.95);
+    color: #f9fafb;
+    border-radius: 0 0 8px 8px;
+    padding: 0.75rem;
+    border: 1px solid #374151;
+    border-top: 0;
+  }
+
+  .mfe-dev-widget__panel h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .mfe-dev-widget__panel ul {
+    margin: 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mfe-dev-widget__panel li {
+    line-height: 1.3;
+  }
+</style>
