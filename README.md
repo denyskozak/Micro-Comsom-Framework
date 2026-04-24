@@ -1,121 +1,116 @@
-# Micro-Cosmos Framework
+# Cosmos Framework
 
-Micro Cosmos meta-framework is a open source production-oriented **enterprise SSR micro-frontend platform prototype** designed to serve different independent frontend teams in one project
-## Problems
+Cosmos Framework is an open-source, production-oriented **SSR micro-frontend platform prototype** built for organizations that need multiple independent frontend teams to deliver in one shared product surface.
 
-- No scalable vertical and horizontal solution for SSR microfrontends
-- Difficulty to use few frontend fromeworks in single project
-- Inconcistancy between teams in organization
+The repository demonstrates a practical composition model where micro-frontends self-register, expose SSR fragments, and are assembled by a shell application at request time.
 
-## Solutions
+## Why this project exists
 
-- Free Micro-frontends with out-of-the box
-- Framework Agnostic - use React, Vue, Angular, etc
-- Built modulary and on universal Hotwire approach
+Large frontend organizations often face the same set of scaling constraints:
 
+- **Fragmented delivery ownership** across teams and domains.
+- **Framework lock-in** when one stack is enforced for every team.
+- **Operational drift** when each team invents its own runtime and integration approach.
 
-## Architecture overview
+Cosmos addresses these by combining:
 
-### Astro
+- Dynamic **service discovery** for runtime registration and health.
+- A server-side **HTML composition shell**.
+- Independent **micro-frontend runtimes** with explicit boundaries.
 
-Astro is a flexible, unopinionated framework that allows you to configure your project in many different ways. In our case is UI composer which "fetch -> collect -> render" micro-frontends with cache
+## Architecture at a glance
 
-### Hotwire (HTML-Over-The-Wire Approach)
+### Shell (`apps/shell-astro`)
 
-Hotwire is an alternative approach to building modern web applications without using much JavaScript by sending HTML instead of JSON over the wire. This makes for fast first-load pages, keeps template rendering on the server, and allows for a simpler, more productive development experience in any programming language, without sacrificing any of the speed or responsiveness associated with a traditional single-page application.
+- Built with Astro and runs as the SSR composition layer.
+- On each request, fetches the current manifest from discovery.
+- Resolves route-to-micro-frontend mapping and injects SSR HTML fragments.
 
+### Service Discovery (`apps/service-discovery`)
 
-### Monorepo layout
+- Node.js HTTP service with in-memory registry and TTL leasing.
+- Provides registration, heartbeat, manifest and health endpoints.
+- Validates contracts via Zod.
+
+### Micro-frontends (`apps/mf-*`)
+
+- Independently executable SSR services.
+- Register on startup and heartbeat periodically.
+- Return HTML fragments from `/ssr` endpoints.
+
+## Monorepo layout
 
 ```txt
 apps/
   shell-astro/            Astro SSR shell + composition middleware
-  service-discovery/      Node.js discovery service (native http + Zod)
-  mf-react-catalog/       Example React + React Router SSR content micro-frontend
-  mf-header-ssr/          SSR header micro-frontend with Sign-In event emitter
-  mf-footer-ssr/          SSR footer micro-frontend
-  mf-auth-client/         Client-side auth micro-frontend listening for header events
+  service-discovery/      Node.js discovery service
+  mf-react-catalog/       React + React Router SSR catalog MFE
+  mf-header-ssr/          SSR header MFE
+  mf-footer-ssr/          SSR footer MFE
+  mf-auth-client/         Client-side auth MFE
+
 libs/
-  discovery-contracts/    Shared Zod schemas and inferred TypeScript types
-  discovery-client/       Reusable service-discovery registration/heartbeat client
+  discovery-contracts/    Shared Zod schemas + TS types
+  discovery-client/       Shared discovery registration/heartbeat client
   shared-types/           Optional shared platform types
-  mfe-infrastructure/     Nx package with orchestration targets for MFE runtime
-  vitest-config/          Shared Vitest config factory helpers
+  mfe-infrastructure/     Nx orchestration targets
+  vitest-config/          Shared Vitest helpers
 ```
 
-### Runtime components
+## Runtime flow
 
-- **Astro shell (`shell-astro`)**
-  - Main UI shell and SSR composer.
-  - Reads manifest from discovery at request time in Astro middleware.
-  - Selects a micro-frontend based on `basePath` and route patterns.
-  - Calls micro-frontend SSR endpoint and injects returned HTML.
-
-- **Service discovery (`service-discovery`)**
-  - Native Node.js `http` server.
-  - In-memory registry with TTL expiration.
-  - Zod validation + normalized JSON errors.
-  - Exposes:
-    - `POST /register`
-    - `POST /heartbeat`
-    - `GET /microfrontends`
-    - `GET /manifest`
-    - `GET /health`
-
-- **React catalog micro-frontend (`mf-react-catalog`)**
-  - React + React Router SSR.
-  - Serves `GET /ssr?route=/catalog/...` endpoint returning rendered HTML.
-  - Registers itself on startup through `@cosmos/discovery-client`.
-  - Sends periodic heartbeats.
-
-## Why this architecture
-
-- **Why Astro as shell/UI composer**
-  - Astro is lightweight for SSR shells and excellent at server-side route orchestration.
-  - It keeps composition logic straightforward while allowing multiple frontend stacks behind SSR endpoints.
-
-- **Why service discovery is separate**
-  - Decouples shell composition from static config and deployment topology.
-  - Lets micro-frontends join/leave dynamically via registration + heartbeat lease model.
-
-- **Why discovery-client is a shared library**
-  - Avoids duplicated registration logic across micro-frontends.
-  - Keeps contracts and request behavior consistent and strongly typed.
-
-## Local ports
-
-- Shell (Astro): `4300`
-- Discovery service: `4400`
-- Catalog micro-frontend: `4500`
-- Header micro-frontend: `4501`
-- Footer micro-frontend: `4502`
-- Auth micro-frontend: `4503`
-
-## Request flow (SSR composition)
+### SSR composition flow
 
 1. Browser requests a route from `shell-astro`.
-2. Astro middleware fetches `GET /manifest` from `service-discovery`.
-3. Shell page logic finds matching micro-frontend for the request path.
-4. Shell fetches SSR HTML from micro-frontend `ssrUrl`.
-5. Shell injects fragment HTML into shell page response.
+2. Shell middleware fetches `GET /manifest` from discovery.
+3. Shell resolves matching micro-frontend(s).
+4. Shell fetches fragment HTML from target `ssrUrl`.
+5. Shell returns composed SSR response.
 
-## Registration flow
+### Registration flow
 
 1. Micro-frontend starts.
-2. It calls `POST /register` via `@cosmos/discovery-client`.
-3. Discovery stores registration with TTL lease.
+2. Sends `POST /register`.
+3. Discovery stores the entry with lease metadata.
 4. Micro-frontend sends periodic `POST /heartbeat`.
-5. Discovery drops expired entries during cleanup and on reads.
+5. Expired entries are removed and no longer appear in manifest.
+
+## Ports (local defaults)
+
+- Shell: `4300`
+- Discovery: `4400`
+- Catalog MFE: `4500`
+- Header MFE: `4501`
+- Footer MFE: `4502`
+- Auth MFE: `4503`
+
+## Dependency strategy for micro-frontends (Nx-aligned)
+
+Each micro-frontend now owns a local `package.json` (`apps/mf-*/package.json`) and declares only the dependencies it needs to run.
+
+This follows Nx guidance for JS/TS workspaces:
+
+- Project relationships can be inferred from source imports and `package.json`.
+- Workspace packages should be referenced via `workspace:*`.
+- Runtime dependencies are declared at the project level, while shared tooling can stay at root.
+
+In this repository, each MFE explicitly depends on `@cosmos/discovery-client` via `workspace:*`, and React-based MFEs declare React runtime dependencies locally.
 
 ## Getting started
 
-> Prerequisite: Node.js 20+ and pnpm.
+> Requirements: Node.js 20+, pnpm.
 
 ```bash
 pnpm install
 ```
 
-Run services in separate terminals:
+### Start full platform
+
+```bash
+pnpm serve:platform
+```
+
+### Start services individually
 
 ```bash
 pnpm serve:discovery
@@ -126,49 +121,42 @@ pnpm serve:auth
 pnpm serve:shell
 ```
 
-Or try running all together:
-
-```bash
-pnpm serve:all
-```
-
-Or run only MFE servers (without shell/discovery):
+### Start only micro-frontends
 
 ```bash
 pnpm serve:mfe-infrastructure
 ```
 
-## Example URLs
+## Useful URLs
 
 - Shell home: http://localhost:4300/
-- Composed catalog list: http://localhost:4300/catalog
-- Header Sign-In button emits `auth:signin-click` via EventEmitter3
-- Auth micro-frontend updates status text after Sign-In click
-- Composed catalog detail: http://localhost:4300/catalog/1
+- Catalog list: http://localhost:4300/catalog
+- Catalog details: http://localhost:4300/catalog/1
 - Discovery health: http://localhost:4400/health
 - Discovery manifest: http://localhost:4400/manifest
 
-## Nx targets
+## Nx commands
 
-- `nx serve service-discovery`
-- `nx serve mf-react-catalog`
-- `nx serve mf-header-ssr`
-- `nx serve mf-footer-ssr`
-- `nx serve mf-auth-client`
-- `nx serve shell-astro`
-- `nx run-many -t serve -p service-discovery,mf-react-catalog,shell-astro --parallel=3`
-- `nx serve mfe-infrastructure`
-- `nx run mfe-infrastructure:serve:platform`
-- `nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
-- `nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,shell-astro`
+```bash
+nx serve service-discovery
+nx serve mf-react-catalog
+nx serve mf-header-ssr
+nx serve mf-footer-ssr
+nx serve mf-auth-client
+nx serve shell-astro
 
-## Evolution path toward fuller enterprise platform
+nx run mfe-infrastructure:serve:platform
+nx run-many -t build -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro
+nx run-many -t typecheck -p discovery-contracts,discovery-client,service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro
+```
 
-This prototype intentionally stays minimal and explicit while preserving good platform boundaries:
+## Roadmap direction
 
-- Discovery can move from in-memory to persistent registry without changing client contracts.
-- Shell can evolve from one SSR fragment call to multi-fragment orchestration and caching.
-- Additional micro-frontends can adopt the same discovery-client and contracts with no shell code changes.
-- Observability, authN/authZ, tenancy, and rollout strategies can be layered in incrementally.
+This prototype intentionally optimizes for clarity and extensibility:
 
-The result is a coherent starting point for enterprise SSR micro-frontend platform evolution rather than a toy tutorial.
+- Move discovery from in-memory registry to durable storage.
+- Add multi-fragment orchestration and caching policies in shell.
+- Expand observability, authN/authZ, tenancy and rollout controls.
+- Formalize team-level contracts for independently deployable MFEs.
+
+If you are exploring enterprise SSR micro-frontends with explicit runtime boundaries, Cosmos is a strong starting baseline.
