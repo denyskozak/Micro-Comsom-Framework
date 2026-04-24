@@ -16,6 +16,12 @@
         "command": "nx run-many -t serve -p service-discovery,mf-react-catalog,mf-header-ssr,mf-footer-ssr,mf-auth-client,shell-astro --parallel=6"
       }
     },
+    "serve:platform:prod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash -lc 'node dist/apps/service-discovery/src/main.js & node dist/apps/mf-react-catalog/src/server/main.js & node dist/apps/mf-header-ssr/src/server/main.js & node dist/apps/mf-footer-ssr/src/server/main.js & node dist/apps/mf-auth-client/src/server/main.js & node apps/shell-astro/dist/server/entry.mjs & wait'"
+      }
+    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

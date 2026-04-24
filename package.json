@@ -15,7 +15,9 @@
     "serve:footer": "nx serve mf-footer-ssr",
     "serve:auth": "nx serve mf-auth-client",
     "serve:mfe-infrastructure": "nx serve mfe-infrastructure",
-    "serve:platform": "nx run mfe-infrastructure:serve:platform"
+    "serve:platform": "nx run mfe-infrastructure:serve:platform",
+    "dev:platform": "pnpm serve:platform",
+    "prod:platform": "pnpm build && nx run mfe-infrastructure:serve:platform:prod"
   },
   "devDependencies": {
     "@astrojs/node": "^9.0.0",

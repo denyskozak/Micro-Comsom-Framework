@@ -1,4 +1,6 @@
 ---
+import DeveloperMfeWidget from './DeveloperMfeWidget.astro';
+
 interface Props {
   route: string;
   headerHtml?: string;
@@ -6,9 +8,18 @@ interface Props {
   composedHtml?: string;
   footerHtml?: string;
   sourceName?: string;
+  connectedMicrofrontends?: App.ConnectedMicrofrontend[];
 }
 
-const { route, headerHtml, authHtml, composedHtml, footerHtml, sourceName } = Astro.props;
+const {
+  route,
+  headerHtml,
+  authHtml,
+  composedHtml,
+  footerHtml,
+  sourceName,
+  connectedMicrofrontends = []
+} = Astro.props;
 ---
 
 <html lang="en">
@@ -89,5 +100,6 @@ const { route, headerHtml, authHtml, composedHtml, footerHtml, sourceName } = As
         {footerHtml ? <Fragment set:html={footerHtml} /> : <p>Footer micro-frontend is unavailable.</p>}
       </section>
     </footer>
+    <DeveloperMfeWidget connectedMicrofrontends={connectedMicrofrontends} />
   </body>
 </html>
