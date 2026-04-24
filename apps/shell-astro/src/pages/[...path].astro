@@ -58,4 +58,5 @@ const [headerHtml, authHtml, composedHtml, footerHtml] = await Promise.all([
   composedHtml={composedHtml}
   footerHtml={footerHtml}
   sourceName={contentEntry?.name}
+  connectedMicrofrontends={Astro.locals.connectedMicrofrontends}
 />
